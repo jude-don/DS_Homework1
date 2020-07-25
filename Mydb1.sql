@@ -61,6 +61,7 @@ WHERE transfers.u_id = users.u_id
 AND transfers.send_amount_currency='CFA';
 
 --Number 4
+-- for the results the months are represented by numbers not words.
 SELECT COUNT (atx_id) AS agents_transactions,
 extract(MONTH from agent_transactions.when_created) AS Months
 FROM "Wave1".agent_transactions, "Wave1".agents
