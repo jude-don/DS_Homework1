@@ -45,19 +45,19 @@ ledger_location text NOT NULL,
 when_created timestamp without time zone NOT NULL
 );
 
--- NB: Wave1 is the schema for this databse instead of the default which is known as public
+
 --Number 1
 SELECT COUNT (*) FROM users;
 
 ---Number 2
 SELECT COUNT (transfer_id) 
-FROM "Wave1".transfers, "Wave1".users
+FROM "public".transfers, "public".users
 WHERE transfers.u_id = users.u_id
 AND transfers.send_amount_currency = 'CFA';
 
 --Number 3
 SELECT COUNT (distinct users.u_id)
-FROM "Wave1".transfers, "Wave1".users 
+FROM "public".transfers, "public".users 
 WHERE transfers.u_id = users.u_id
 AND transfers.send_amount_currency='CFA';
 
@@ -65,7 +65,7 @@ AND transfers.send_amount_currency='CFA';
 -- for the results the months are represented by numbers not words.
 SELECT COUNT (atx_id) AS agents_transactions,
 extract(MONTH from agent_transactions.when_created) AS Months
-FROM "Wave1".agent_transactions, "Wave1".agents
+FROM "public".agent_transactions, "public".agents
 WHERE agent_transactions.agent_id = agents.agent_id
 AND agent_transactions.when_created 
 BETWEEN '2018-01-01 00:00:00' AND '2018-12-31 23:59:59' GROUP BY
@@ -76,7 +76,7 @@ ORDER BY agent_transactions.when_created ASC;
 --Net depositors Count
 SELECT COUNT (agents.agent_id) 
 AS net_depositors 
-FROM "Wave1".agent_transactions, "Wave1".agents
+FROM "public".agent_transactions, "public".agents
 WHERE amount < 0 
 AND agent_transactions.agent_id =agents.agent_id 
 AND agent_transactions.when_created BETWEEN '2020-01-01 00:00:00' AND '2020-01-07 23:59:59';
@@ -84,7 +84,7 @@ AND agent_transactions.when_created BETWEEN '2020-01-01 00:00:00' AND '2020-01-0
 -- Net withdrawals Count
 SELECT COUNT (agents.agent_id) 
 AS net_withdrawal 
-FROM "Wave1".agent_transactions, "Wave1".agents
+FROM "public".agent_transactions, "public".agents
 WHERE amount > 0 
 AND agent_transactions.agent_id =agents.agent_id 
 AND agent_transactions.when_created BETWEEN '2020-04-01 00:00:00' AND '2020-04-07 23:59:59';
@@ -92,14 +92,14 @@ AND agent_transactions.when_created BETWEEN '2020-04-01 00:00:00' AND '2020-04-0
 --Number 6
 SELECT COUNT (atx_id) 
 AS volume, City 
-FROM "Wave1".agent_transactions,"Wave1".agents
+FROM "public".agent_transactions,"public".agents
 WHERE agent_transactions.when_created BETWEEN '2020-04-01 00:00:00' AND '2020-04-07 23:59:59'
 GROUP BY City;
 
 --Number 7
 SELECT COUNT (atx_id) 
 AS volume, City, Country
-FROM "Wave1".agent_transactions,"Wave1".agents
+FROM "public".agent_transactions,"public".agents
 WHERE agent_transactions.when_created BETWEEN '2020-04-01 00:00:00' AND '2020-01-07 23:59:59'
 GROUP BY City, Country;
 
@@ -107,7 +107,7 @@ GROUP BY City, Country;
 SELECT ledger_location AS Country, kind AS transfer_kind,
 COUNT(send_amount_scalar) 
 AS volume 
-FROM "Wave1".agent_transactions,"Wave1".wallets, "Wave1".transfers 
+FROM "public".agent_transactions,"public".wallets, "public".transfers 
 WHERE transfers.source_wallet_id= wallets.wallet_id
 AND agent_transactions.when_created BETWEEN '2020-04-01 00:00:00' AND '2020-04-07 23:59:59'
 GROUP BY Country,kind;
@@ -118,14 +118,14 @@ SELECT ledger_location AS Country, kind AS transfer_kind
 unique_users,
 COUNT(send_amount_scalar) 
 AS volume, users.name AS names_ 
-FROM "Wave1".agent_transactions,"Wave1".wallets, "Wave1".transfers, "Wave1".users 
+FROM "public".agent_transactions,"public".wallets, "public".transfers, "public".users 
 WHERE transfers.source_wallet_id= wallets.wallet_id AND transfers.u_id = users.u_id
 AND agent_transactions.when_created BETWEEN '2020-04-01 00:00:00' AND '2020-04-07 23:59:59'
 GROUP BY Country,kind, users.name;
 
 --Number 10 
 SELECT wallet_id, send_amount_scalar
-FROM "Wave1".transfers,"Wave1".wallets 
+FROM "public".transfers,"public".wallets 
 WHERE wallets.wallet_id= transfers.source_wallet_id
 AND transfers.send_amount_scalar >10000000
 AND transfers.send_amount_currency='CFA' 
