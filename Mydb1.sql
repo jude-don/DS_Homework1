@@ -45,6 +45,7 @@ ledger_location text NOT NULL,
 when_created timestamp without time zone NOT NULL
 );
 
+-- NB: Wave1 is the schema for this databse instead of the default which is known as public
 --Number 1
 SELECT COUNT (*) FROM users;
 
